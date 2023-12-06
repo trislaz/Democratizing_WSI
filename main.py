@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 import numpy as np
 
-from src.encode_slide import encode_image
 
 parser = argparse.ArgumentParser(description='Encode WSI into a feature vector.')
 parser.add_argument('--input', type=str, help='Path to the input WSIs. Can be a directory or a single file.')
@@ -20,6 +19,7 @@ output.mkdir(exist_ok=True, parents=True)
 
 # Useful for imports
 os.environ['USE_SCM'] = 'True' if args.gigassl_type == 'scm' else 'False'
+from src.encode_slide import encode_image
 
 dico = encode_image(tile_encoder_type=args.tile_encoder_type, gigassl_type=args.gigassl_type, image_path=args.input, N_ensemble=args.N_ensemble, store_intermediate=args.store_intermediate)
 np.save(output / f'features_{Path(args.input).stem}_{Path(args.tile_encoder_type).stem}_{args.gigassl_type}.npy', dico)
