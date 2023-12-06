@@ -10,14 +10,15 @@ from typing import Type, Union
 
 import numpy as np
 import pandas as pd
-import sparseconvnet
 import torch
 import torch.nn as nn
 import torch.nn.functional
 import torch.nn.functional as F
 import torchvision
 import torchvision.models.resnet as resnet_factory
-from sparseconvnet import SparseConvNetTensor
+if os.environ['USE_SCM'] == 'True':
+    import sparseconvnet
+    from sparseconvnet import SparseConvNetTensor
 from torch.nn import (AvgPool2d, BatchNorm1d, BatchNorm2d, Conv1d, Conv2d,
                       Conv3d, Dropout, Identity, InstanceNorm1d, LayerNorm,
                       LeakyReLU, Linear, LogSoftmax, MaxPool2d, MaxPool3d,

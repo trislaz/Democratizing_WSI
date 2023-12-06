@@ -14,13 +14,15 @@ from torchvision.models import resnet18, resnet50
 from torchvision.transforms import ToTensor
 from tqdm import tqdm
 
+if os.environ['USE_SCM'] == 'True':
+    from .networks import FullSparseConvMIL
+from .networks import ResidualMLP
 from .downloads import (download_gigassl_mlp_ctranspath,
                         download_gigassl_mlp_moco,
                         download_gigassl_scm_ctranspath,
                         download_gigassl_scm_moco)
 from .encode_tiles import (ModelWrapper, get_embeddings, get_tile_encoder,
                            load_moco_model)
-from .networks import FullSparseConvMIL, ResidualMLP
 from .tile_slide import SlideTileDataset
 
 from functools import wraps

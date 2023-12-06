@@ -18,5 +18,8 @@ args = parser.parse_args()
 output = Path(args.output)
 output.mkdir(exist_ok=True, parents=True)
 
+# Useful for imports
+os.environ['USE_SCM'] = 'True' if args.gigassl_type == 'scm' else 'False'
+
 dico = encode_image(tile_encoder_type=args.tile_encoder_type, gigassl_type=args.gigassl_type, image_path=args.input, N_ensemble=args.N_ensemble, store_intermediate=args.store_intermediate)
-np.save(output / f'features_{Path(args.tile_encoder_type).stem}_{args.gigassl_type}.npy', dico)
+np.save(output / f'features_{Path(args.input).stem}_{Path(args.tile_encoder_type).stem}_{args.gigassl_type}.npy', dico)

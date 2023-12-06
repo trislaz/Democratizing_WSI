@@ -3,7 +3,6 @@ from pathlib import Path
 
 import requests
 
-
 def download_ctranspath():
     model_root = Path('./models/')
     if not model_root.exists():
@@ -91,11 +90,12 @@ def download_gigassl_mlp_moco():
         return str(model_path.resolve())
     else:
         print(f'Downloading {str(model_path)}')
-        response = requests.get('https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/5d9b5e4b-7e4e-4c1e-8d0a-4b1f4d2a2c8e/file_downloaded')
+        response = requests.get('https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/b755938b-4edd-4139-8586-43b476b121b3/file_downloaded')
         response.raise_for_status()  # Will raise an error for a bad status code
         with open(model_path, 'wb') as file:
             file.write(response.content)
         return str(model_path.resolve())
+
 
 def download_TCGA_ctranspath():
     data_root = Path('./data_encoded')
@@ -144,3 +144,17 @@ def download_pca_ctranspath():
         with open(model_path, 'wb') as file:
             file.write(response.content)
         return str(model_path.resolve())
+
+if __name__ == '__main__':
+    # Test dl
+    download_ctranspath()
+    download_moco()
+    download_gigassl_scm_moco()
+    download_gigassl_scm_ctranspath()
+    download_gigassl_mlp_ctranspath()
+    download_gigassl_mlp_moco()
+    download_TCGA_ctranspath()
+    download_TCGA_moco()
+    download_pca_ctranspath()
+    print('Done')
+    

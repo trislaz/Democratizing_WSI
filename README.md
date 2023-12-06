@@ -22,6 +22,21 @@ Note: `--input` is the path of either a WSI or a folder containing WSI (in .ndpi
 - `--N_ensemble`: number of WSI views to ensemble (default: 100). Usually, the more the better, but the more, the heavier computationally.
 - `--store_intermediate`: path of the folder where to store intermediate results (default: None). Intermediate results include tissue mask, tiles localizations as well as the used tiles themselves.
 
+# Test
+
+To run a simple test, install the basic requirements and run:
+
+```bash
+bash test_one_slide.sh
+```
+
+It will:
+
+* Download a slide from the TCGA-BRCA project (and put it under data_test)
+* Run the `main.py` script on it (using gigassl_type=mlp and tile_encoder_type=moco)
+
+It stores the extracted tiles and thumbnail under `./tmp`. Have a look at it!
+
 # Installation
 
 ## Basic requirements
