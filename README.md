@@ -37,6 +37,8 @@ It will:
 
 It stores the extracted tiles and thumbnail under `./tmp`. Have a look at it!
 
+Note: this test ran successfully using the exact environment described in ./tested_env.txt.
+
 # Installation
 
 ## Basic requirements
