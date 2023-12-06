@@ -19,6 +19,7 @@ output.mkdir(exist_ok=True, parents=True)
 
 # Useful for imports
 os.environ['USE_SCM'] = 'True' if args.gigassl_type == 'scm' else 'False'
+os.environ['USE_TRANSPATH'] = 'True' if args.tile_encoder_type == 'ctranspath' else 'False'
 from src.encode_slide import encode_image
 
 dico = encode_image(tile_encoder_type=args.tile_encoder_type, gigassl_type=args.gigassl_type, image_path=args.input, N_ensemble=args.N_ensemble, store_intermediate=args.store_intermediate)

@@ -4,14 +4,15 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import timm
 import torch
 import torch.nn as nn
 from PIL import Image, ImageDraw
 from skimage.color import rgb2gray
 from skimage.filters import  threshold_otsu
 from skimage.morphology import square
-from timm.models.layers.helpers import to_2tuple
+if os.environ['USE_TRANSPATH'] == 'True':
+    from timm.models.layers.helpers import to_2tuple
+    import timm
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.models import resnet18, resnet50
