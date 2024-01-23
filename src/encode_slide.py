@@ -20,7 +20,9 @@ from .networks import ResidualMLP
 from .downloads import (download_gigassl_mlp_ctranspath,
                         download_gigassl_mlp_moco,
                         download_gigassl_scm_ctranspath,
-                        download_gigassl_scm_moco)
+                        download_gigassl_scm_moco, 
+                        download_gigassl_scm_phikon, 
+                        download_gigassl_mlp_phikon)
 from .encode_tiles import (ModelWrapper, get_embeddings, get_tile_encoder,
                            load_moco_model)
 from .tile_slide import SlideTileDataset
@@ -86,10 +88,11 @@ def get_model_and_hook(tile_encoder_type, gigassl_type):
     return model, hooker
 
 @timing
-def encode_image(tile_encoder_type, gigassl_type, image_path, N_ensemble, magnification_tile=10, last_layer=False, n_tiles_during_training=5, store_intermediate=None):
+def encode_image(tile_encoder_type, gigassl_type, image_path, N_ensemble, last_layer=False, n_tiles_during_training=5, store_intermediate=None):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     tile_encoder = get_tile_encoder(tile_encoder_type, device)
+    magnification_tile = 20 if tile_encoder_type == 'phikon' else 10
 
     gigassl, hook_giga = get_model_and_hook(tile_encoder_type, gigassl_type)
     gigassl.eval().to(device)

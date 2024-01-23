@@ -17,9 +17,10 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.models import resnet18, resnet50
 from torchvision.transforms import ToTensor
+from transformers import ViTModel
 
 from .downloads import (download_ctranspath, download_moco,
-                        download_pca_ctranspath)
+                        download_pca_ctranspath, download_pca_phikon, download_phikon)
 from .tile_slide import SlideTileDataset
 
 
@@ -46,6 +47,13 @@ def load_moco_model(moco_weights_path, model_name='resnet18'):
             continue
         assert (param == state_dict[name]).all().item(), 'Weights not loaded properly'
     print('Loaded the weigths properly.')
+    return model
+
+def load_phikon_model(path_placeholder):
+    """
+    Loads the phikon model.
+    """
+    model = ViTModel.from_pretrained("owkin/phikon", add_pooling_layer=False)
     return model
 
 def ctranspath():
@@ -142,6 +150,12 @@ def get_tile_encoder(model, device):
         model.eval().to(device)
         pca = download_pca_ctranspath()
         pca = np.load(pca, allow_pickle=True).item()
+        return ModelWrapper(model, last_layer=True, pca=pca)
+    elif model == 'phikon':
+        model = load_phikon_model(model_path)
+        model.eval().to(device)
+        pca = download_pca_phikon()
+        pca = torch.load(pca) #small incoherency with ctranspath (numpy)
         return ModelWrapper(model, last_layer=True, pca=pca)
 
 def get_embeddings(model, image_path, N_ensemble=500, magnification_tile=10, device='cpu', n_tiles_during_training=5, store_intermediate=None):

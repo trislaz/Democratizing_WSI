@@ -16,6 +16,9 @@ def download_ctranspath():
         os.system(f"""wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1DoDx_70_TLj98gTf6YTXnu4tFhsFocDX' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1DoDx_70_TLj98gTf6YTXnu4tFhsFocDX" -O {str(model_path.resolve())} && rm -rf /tmp/cookies.txtOD""")
         return str(model_path.resolve())
 
+def download_phikon():
+    return None
+
 def download_moco():
     model_root = Path('./models/')
     if not model_root.exists():
@@ -27,6 +30,38 @@ def download_moco():
     else:
         print(f'Downloading {str(model_path)}')
         response = requests.get('https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/8c93165a-87dd-4611-9147-5b4e4a38fd91/file_downloaded')
+        response.raise_for_status()  # Will raise an error for a bad status code
+        with open(model_path, 'wb') as file:
+            file.write(response.content)
+        return str(model_path.resolve())
+
+def download_gigassl_scm_phikon():
+    model_root = Path('./models/')
+    if not model_root.exists():
+        model_root.mkdir()
+    model_path = model_root / 'gigassl-scm-phikon.pth.tar'
+    if model_path.exists():
+        print(f'{str(model_path)} already exists')
+        return str(model_path.resolve())
+    else:
+        print(f'Downloading {str(model_path)}')
+        response = requests.get('https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/80290ac0-8e39-4de3-a6a4-a1425c931ae6/file_downloaded')
+        response.raise_for_status()  # Will raise an error for a bad status code
+        with open(model_path, 'wb') as file:
+            file.write(response.content)
+        return str(model_path.resolve())
+
+def download_gigassl_mlp_phikon():
+    model_root = Path('./models/')
+    if not model_root.exists():
+        model_root.mkdir()
+    model_path = model_root / 'gigassl-mlp-phikon.pth.tar'
+    if model_path.exists():
+        print(f'{str(model_path)} already exists')
+        return str(model_path.resolve())
+    else:
+        print(f'Downloading {str(model_path)}')
+        response = requests.get('https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/ac872e8f-9d6d-4b9d-b294-71205fb3aba7/file_downloaded')
         response.raise_for_status()  # Will raise an error for a bad status code
         with open(model_path, 'wb') as file:
             file.write(response.content)
@@ -144,6 +179,23 @@ def download_pca_ctranspath():
         with open(model_path, 'wb') as file:
             file.write(response.content)
         return str(model_path.resolve())
+
+def download_pca_phikon():
+    model_root = Path('./models/')
+    if not model_root.exists():
+        model_root.mkdir()
+    model_path = model_root / 'pca-phikon.pth'
+    if model_path.exists():
+        print(f'{str(model_path)} already exists')
+        return str(model_path.resolve())
+    else:
+        print(f'Downloading {str(model_path)}')
+        response = requests.get('https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/2aa5a972-9b06-4fee-8ff0-f780b5f5b58e/file_downloaded')
+        response.raise_for_status()  # Will raise an error for a bad status code
+        with open(model_path, 'wb') as file:
+            file.write(response.content)
+        return str(model_path.resolve())
+
 
 if __name__ == '__main__':
     # Test dl
