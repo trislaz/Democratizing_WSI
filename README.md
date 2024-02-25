@@ -17,7 +17,7 @@ Note: `--input` is the path of either a WSI or a folder containing WSI (in .ndpi
 
 - `--input`: path of either a WSI or a folder containing WSI (in .ndpi, .svs or .tif format) (required)
 - `--output`: path of the output folder (required)
-- `--tile_encoder_type`: type of tile encoder to use (default: moco, available: moco, ctranspath)
+- `--tile_encoder_type`: type of tile encoder to use (default: moco, available: moco, ctranspath, phikon)
 - `--gigassl_type`: type of gigassl model (default: scm, available: scm, mlp)
 - `--N_ensemble`: number of WSI views to ensemble (default: 100). Usually, the more the better, but the more, the heavier computationally.
 - `--store_intermediate`: path of the folder where to store intermediate results (default: None). Intermediate results include tissue mask, tiles localizations as well as the used tiles themselves.
@@ -32,7 +32,7 @@ bash test_one_slide.sh
 
 It will:
 
-* Download a slide from the TCGA-BRCA project (and put it under data_test)
+* Downloads a slide from the TCGA-BRCA project (and put it under data_test)
 * Run the `main.py` script on it (using gigassl_type=mlp and tile_encoder_type=moco)
 
 It stores the extracted tiles and thumbnail under `./tmp`. Have a look at it!
