@@ -88,7 +88,7 @@ def get_model_and_hook(tile_encoder_type, gigassl_type):
     return model, hooker
 
 @timing
-def encode_image(tile_encoder_type, gigassl_type, image_path, N_ensemble, last_layer=False, n_tiles_during_training=5, store_intermediate=None):
+def encode_image(tile_encoder_type, gigassl_type, image_path, N_ensemble, last_layer=False, n_tiles_during_training=5, store_intermediate=None, from_to=[0, -1]):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     tile_encoder = get_tile_encoder(tile_encoder_type, device)
@@ -99,17 +99,21 @@ def encode_image(tile_encoder_type, gigassl_type, image_path, N_ensemble, last_l
 
     image_path = Path(image_path)
     if image_path.is_dir():
-        images_paths = [x for x in image_path.iterdir() if x.suffix in ['.svs', '.ndpi', '.tiff', '.tif']]
+        images_paths = np.sort([x for x in image_path.iterdir() if x.suffix in ['.svs', '.ndpi', '.tiff', '.tif']])[from_to[0]:from_to[1]]
     else:
         images_paths = [image_path]
     
     dico_embs = {}
     for o, image_path in tqdm(enumerate(images_paths)):
-        embeddings_tiles, xy_tiles = get_embeddings(tile_encoder, str(image_path), N_ensemble=N_ensemble, magnification_tile=magnification_tile, device=device, store_intermediate=store_intermediate)
-        if embeddings_tiles is None:
-            print(f'No tiles for {image_path}')
+        try:
+            embeddings_tiles, xy_tiles = get_embeddings(tile_encoder, str(image_path), N_ensemble=N_ensemble, magnification_tile=magnification_tile, device=device, store_intermediate=store_intermediate)
+            if embeddings_tiles is None:
+                print(f'No tiles for {image_path}')
+                dico_embs[image_path.stem] = None
+                continue
+            embedding_gigassl = encode_wsi_from_embeddings(gigassl, hook_giga, embeddings_tiles, xy_tiles, device, n_tiles_during_training=n_tiles_during_training)
+            dico_embs[image_path.stem] = embedding_gigassl
+        except Exception as e:
+            print(f'Error for {image_path}: {e}')
             dico_embs[image_path.stem] = None
-            continue
-        embedding_gigassl = encode_wsi_from_embeddings(gigassl, hook_giga, embeddings_tiles, xy_tiles, device, n_tiles_during_training=n_tiles_during_training)
-        dico_embs[image_path.stem] = embedding_gigassl
     return dico_embs

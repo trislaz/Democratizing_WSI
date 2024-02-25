@@ -118,9 +118,12 @@ def load_transpath_model(transpath_weights_path):
 class ModelWrapper:
     """Wraps a model so that forward it outputs the right embeddings,
     depending on the type of model"""
-    def __init__(self, model, last_layer=True, pca=None):
+    def __init__(self, model, last_layer=True, pca=None, phikon=False):
         self.model = model
         self.last_layer = last_layer
+        self.phikon = phikon
+        if phikon:
+            self.last_layer=True
         self.pca = pca
         if not last_layer:
             self.hook = [0]
@@ -132,6 +135,8 @@ class ModelWrapper:
         embeddings = self.model(x)
         if not self.last_layer:
             embeddings = torch.mean(self.hook[0], dim=(2, 3))
+        if self.phikon:
+            embeddings = embeddings.last_hidden_state[:,0,:]
         embeddings = embeddings.squeeze().detach().cpu().numpy()
         if self.pca is not None:
             if embeddings.ndim == 1:
@@ -156,7 +161,7 @@ def get_tile_encoder(model, device):
         model.eval().to(device)
         pca = download_pca_phikon()
         pca = torch.load(pca) #small incoherency with ctranspath (numpy)
-        return ModelWrapper(model, last_layer=True, pca=pca)
+        return ModelWrapper(model, last_layer=True, pca=pca, phikon=True)
 
 def get_embeddings(model, image_path, N_ensemble=500, magnification_tile=10, device='cpu', n_tiles_during_training=5, store_intermediate=None):
     """
