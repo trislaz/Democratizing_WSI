@@ -22,6 +22,10 @@ Note: `--input` is the path of either a WSI or a folder containing WSI (in .ndpi
 - `--N_ensemble`: number of WSI views to ensemble (default: 100). Usually, the more the better, but the more, the heavier computationally.
 - `--store_intermediate`: path of the folder where to store intermediate results (default: None). Intermediate results include tissue mask, tiles localizations as well as the used tiles themselves.
 
+# Parallel computing
+
+Fill the `slurm_encode.sh` to launch the encodings on multiple nodes.
+
 # Test
 
 To run a simple test, install the basic requirements and run:
