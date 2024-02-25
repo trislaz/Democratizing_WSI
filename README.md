@@ -17,7 +17,7 @@ Note: `--input` is the path of either a WSI or a folder containing WSI (in .ndpi
 
 - `--input`: path of either a WSI or a folder containing WSI (in .ndpi, .svs or .tif format) (required)
 - `--output`: path of the output folder (required)
-- `--tile_encoder_type`: type of tile encoder to use (default: moco, available: moco, ctranspath, phikon)
+- `--tile_encoder_type`: type of tile encoder to use (default: moco, available: moco, [ctranspath](https://github.com/Xiyue-Wang/TransPath), [phikon](https://www.medrxiv.org/content/10.1101/2023.07.21.23292757v1))
 - `--gigassl_type`: type of gigassl model (default: scm, available: scm, mlp)
 - `--N_ensemble`: number of WSI views to ensemble (default: 100). Usually, the more the better, but the more, the heavier computationally.
 - `--store_intermediate`: path of the folder where to store intermediate results (default: None). Intermediate results include tissue mask, tiles localizations as well as the used tiles themselves.
@@ -50,19 +50,19 @@ Then, in this repository, run:
 conda env create -f requirements.yml && conda activate gigassl
 ```
 
-With these requirements you will be able to run gigassl models of type `mlp` using the `moco` encoder.
+With these requirements you will be able to run gigassl models of type `mlp` using the `moco` or `phikon` encoder.
 They provide a quick way to test the package, as well as good WSIs embeddings (even if a bit less performant than the ones obtained with `scm` models).
 
 ## Requirements to run gigassl models of type `scm`
 
 `scm` refers to SparseConvMIL-related models. These are the ones evaluated in the paper.
 
-After having installed the basic requirements, you will need to install the [SparseConvNet](https://github.com/facebookresearch/SparseConvNet), following the instruction on its github repository.
+After having installed the basic requirements, you will need to install the [SparseConvNet](https://github.com/facebookresearch/SparseConvNet) library, following the instruction on its github repository.
 In their setup instructions, do not forget to have at least one GPU available when launching `bash develop.sh`, otherwise the GPU version of the package will not be installed.
 
 ## Requirements to run gigassl trained on top of CTransPath embeddings
 
-`scm` and `mlp` GigaSSL models have been trained on both MoCo (in-house model) and CTransPath embeddings.
+`scm` and `mlp` GigaSSL models have been trained on both MoCo (in-house model), Phikon and CTransPath embeddings.
 Performances using the CTransPath embeddings are better than the ones using MoCo embeddings.
 As stated in the [CTransPath original package](https://github.com/Xiyue-Wang/TransPath), you will have to:
 
