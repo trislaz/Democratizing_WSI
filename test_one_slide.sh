@@ -8,4 +8,4 @@ fi
 
 # Encode the slide - simplest model : mlp + moco -
 
-python main.py --input "$path" --output "./data_encoded" --gigassl_type "mlp" --tile_encoder_type "moco" --N_ensemble 5 --store_intermediate "./.tmp"
+python main.py --input "$path" --output "./data_encoded" --gigassl_type "mlp" --tile_encoder_type "moco" --N_ensemble 50 --store_intermediate "./.tmp"
