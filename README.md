@@ -3,7 +3,7 @@
 Companion package for the paper "Democratizing computational pathology: optimized Whole Slide Image representations for The Cancer Genome Atlas".
 This package will allow you to encode Whole Slide Images into their Giga-SSL representation (1 feature vector) with **one command line**.
 
-# Usage
+# Usage - Encode WSIs
 
 Nothing easier. Just use the `main.py` script; it will handle the necessary model downloads for you.
 
