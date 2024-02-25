@@ -2,11 +2,10 @@
 #SBATCH --array=0-100%5
 #SBATCH --partition=gpu
 #SBATCH --cpus-per-task=5
-#SBATCH --ntasks=1             # Nombre total de processus MPI
-#SBATCH --ntasks-per-node=1    # Nombre de processus MPI par noeud
-# Dans le vocabulaire Slurm "multithread" fait référence à l"hyperthreading.
-#SBATCH --hint=nomultithread   # 1 processus MPI par coeur physique (pas d"hyperthreading)
-#SBATCH --output=logs/%x_%a.out  # Nom du fichier de sortie contenant l"ID et l"indice
+#SBATCH --ntasks=1             
+#SBATCH --ntasks-per-node=1    
+#SBATCH --hint=nomultithread   
+#SBATCH --output=logs/%x_%a.out 
 
 slides='/path/to/slide/folder/'
 output='./outs/'
