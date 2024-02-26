@@ -95,6 +95,13 @@ def download_TCGA_moco():
     data_path = data_root / 'TCGA-gigassl_moco.npy'
     return download_from_url(url, data_path)
 
+def download_TCGA_phikon():
+    url = "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/6ab7211d-f850-47b7-9091-54dc87abb66b/file_downloaded"
+    data_root = Path('./data_encoded')
+    data_root.mkdir(exist_ok=True, parents=True)
+    data_path = data_root / 'TCGA-gigassl_phikon.npy'
+    return download_from_url(url, data_path)
+
 def download_pca_ctranspath():
     url = "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/b2301b46-433e-4028-aba1-853c71739638/file_downloaded"
     model_root = Path('./models/')
