@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import gdown
 
 import requests
 
@@ -26,7 +27,7 @@ def download_ctranspath():
         return str(model_path.resolve())
     else:
         print(f'Downloading {str(model_path)}')
-        os.system(f"""wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1DoDx_70_TLj98gTf6YTXnu4tFhsFocDX' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1DoDx_70_TLj98gTf6YTXnu4tFhsFocDX" -O {str(model_path.resolve())} && rm -rf /tmp/cookies.txtOD""")
+        gdown.download('https://drive.google.com/uc?id=1DoDx_70_TLj98gTf6YTXnu4tFhsFocDX', str(model_path), quiet=False)
         return str(model_path.resolve())
 
 def download_phikon():

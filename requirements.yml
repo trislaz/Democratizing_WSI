@@ -27,5 +27,6 @@ dependencies:
   - pip:
      - intel-openmp
      - mkl
+     - gdown
      - opencv-python
      - spams
