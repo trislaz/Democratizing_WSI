@@ -33,6 +33,12 @@ def download_ctranspath():
 def download_phikon():
     return None
 
+def download_gigapath():
+    return None
+
+def download_uni():
+    return None
+
 def download_moco():
     url = "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/8c93165a-87dd-4611-9147-5b4e4a38fd91/file_downloaded"
     model_root = Path('./models/')
@@ -82,6 +88,20 @@ def download_gigassl_mlp_moco():
     model_path = model_root / 'gigassl-mlp-moco.pth'
     return download_from_url(url, model_path)
 
+def download_gigassl_scm_gigapath():
+    url = ""
+    model_root = Path('./models/')
+    model_root.mkdir(exist_ok=True, parents=True)
+    model_path = model_root / 'gigassl-scm-gigapath.pth.tar'
+    return download_from_url(url, model_path)
+
+def download_gigassl_scm_uni():
+    url = ""
+    model_root = Path('./models/')
+    model_root.mkdir(exist_ok=True, parents=True)
+    model_path = model_root / 'gigassl-scm-uni.pth'
+    return download_from_url(url, model_path)
+
 def download_TCGA_ctranspath():
     url = "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/ccf402f7-34ee-4a74-8b8a-51d9e9cebea0/file_downloaded"
     data_root = Path('./data_encoded')
@@ -115,6 +135,20 @@ def download_pca_phikon():
     model_root = Path('./models/')
     model_root.mkdir(exist_ok=True, parents=True)
     model_path = model_root / 'pca-phikon.pth'
+    return download_from_url(url, model_path)
+
+def download_pca_gigapath():
+    url = ""
+    model_root = Path('./models/')
+    model_root.mkdir(exist_ok=True, parents=True)
+    model_path = model_root / 'pca-gigapath.pth'
+    return download_from_url(url, model_path)
+
+def download_pca_uni():
+    url = ""
+    model_root = Path('./models/')
+    model_root.mkdir(exist_ok=True, parents=True)
+    model_path = model_root / 'pca-uni.pth'
     return download_from_url(url, model_path)
 
 if __name__ == '__main__':

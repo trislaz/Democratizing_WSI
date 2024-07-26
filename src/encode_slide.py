@@ -22,7 +22,9 @@ from .downloads import (download_gigassl_mlp_ctranspath,
                         download_gigassl_scm_ctranspath,
                         download_gigassl_scm_moco, 
                         download_gigassl_scm_phikon, 
-                        download_gigassl_mlp_phikon)
+                        download_gigassl_mlp_phikon,
+                        download_gigassl_scm_gigapath,
+                        download_gigassl_scm_uni)
 from .encode_tiles import (ModelWrapper, get_embeddings, get_tile_encoder,
                            load_moco_model)
 from .tile_slide import SlideTileDataset
@@ -92,7 +94,7 @@ def encode_image(tile_encoder_type, gigassl_type, image_path, N_ensemble, last_l
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     tile_encoder = get_tile_encoder(tile_encoder_type, device)
-    magnification_tile = 20 if tile_encoder_type == 'phikon' else 10
+    magnification_tile = 20 if tile_encoder_type in {'phikon', 'uni'} else 10
 
     gigassl, hook_giga = get_model_and_hook(tile_encoder_type, gigassl_type)
     gigassl.eval().to(device)

@@ -13,6 +13,9 @@ from skimage.morphology import square
 if os.environ['USE_TRANSPATH'] == 'True':
     from timm.models.layers.helpers import to_2tuple
     import timm
+if (os.environ['USE_GIGAPATH'] == 'True') or (os.environ['USE_UNI'] == 'True'):
+    import timm
+
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.models import resnet18, resnet50
@@ -20,7 +23,8 @@ from torchvision.transforms import ToTensor
 from transformers import ViTModel
 
 from .downloads import (download_ctranspath, download_moco,
-                        download_pca_ctranspath, download_pca_phikon, download_phikon)
+                        download_pca_ctranspath, download_pca_phikon, download_phikon, 
+                        download_gigapath, download_pca_gigapath, download_pca_uni, download_uni)
 from .tile_slide import SlideTileDataset
 
 
@@ -54,6 +58,27 @@ def load_phikon_model(path_placeholder):
     Loads the phikon model.
     """
     model = ViTModel.from_pretrained("owkin/phikon", add_pooling_layer=False)
+    return model
+
+def load_gigapath_model(path_placeholder=None):
+    """
+    @https://github.com/prov-gigapath/prov-gigapath
+    """
+    if path_placeholder is None:
+        tile_encoder = timm.create_model('hf_hub:prov-gigapath/prov-gigapath', pretrained=True)
+        tile_encoder.eval()
+    return tile_encoder
+
+def load_uni_model(path='/cluster/CBIO/home/tlazard/.cache/dl_models/uni/pytorch_model.bin'):
+    """
+    @https://huggingface.co/MahmoodLab/UNI
+    """
+    if path is None:
+        model = timm.create_model(
+    "vit_large_patch16_224", img_size=224, patch_size=16, init_values=1e-5, num_classes=0, dynamic_img_size=True
+)
+        model.load_state_dict(torch.load(path, map_location="cpu"), strict=True)
+        model.eval()
     return model
 
 def ctranspath():
@@ -162,7 +187,19 @@ def get_tile_encoder(model, device):
         pca = download_pca_phikon()
         pca = torch.load(pca) #small incoherency with ctranspath (numpy)
         return ModelWrapper(model, last_layer=True, pca=pca, phikon=True)
-
+    elif model == "gigapath":
+        model = load_gigapath_model(model_path)
+        model.eval().to(device)
+        pca = download_pca_gigapath()
+        pca = torch.load(pca)
+        return ModelWrapper(model, last_layer=True, pca=pca, phikon=False)
+    elif model == "uni":
+        model = load_gigapath_model()
+        model.eval().to(device)
+        pca = download_pca_gigapath()
+        pca = torch.load(pca)
+        return ModelWrapper(model, last_layer=True, pca=pca, phikon=False)
+       
 def get_embeddings(model, image_path, N_ensemble=500, magnification_tile=10, device='cpu', n_tiles_during_training=5, store_intermediate=None):
     """
     Computes the embeddings of a slide.
@@ -187,13 +224,14 @@ def get_embeddings(model, image_path, N_ensemble=500, magnification_tile=10, dev
     embeddings = []
     xys = []
     for batch in dataloader:
-        with torch.no_grad():
-            im, xy = batch
-            im = im.to(device)
-            xys.append(xy)
-            e = model(im)
-            e = e.reshape((-1, 256))
-            embeddings.append(e)
+        with torch.autocast(device_type="cuda", dtype=torch.float16):
+            with torch.no_grad():
+                im, xy = batch
+                im = im.to(device)
+                xys.append(xy)
+                e = model(im)
+                e = e.reshape((-1, 256))
+                embeddings.append(e)
     embeddings = np.concatenate(embeddings)
     xys = torch.concatenate(xys)
     del dataloader, data
