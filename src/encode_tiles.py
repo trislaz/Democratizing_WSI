@@ -22,9 +22,10 @@ from torchvision.models import resnet18, resnet50
 from torchvision.transforms import ToTensor
 from transformers import ViTModel
 
-from .downloads import (download_ctranspath, download_moco,
-                        download_pca_ctranspath, download_pca_phikon, download_phikon, 
-                        download_gigapath, download_pca_gigapath, download_pca_uni, download_uni)
+from .downloads import download_item
+# (download_ctranspath, download_moco,
+#                         download_pca_ctranspath, download_pca_phikon, download_phikon, 
+#                         download_gigapath, download_pca_gigapath, download_pca_uni, download_uni)
 from .tile_slide import SlideTileDataset
 
 
@@ -58,6 +59,36 @@ def load_phikon_model(path_placeholder):
     Loads the phikon model.
     """
     model = ViTModel.from_pretrained("owkin/phikon", add_pooling_layer=False)
+    return model
+
+def load_optimus_model(path=None):
+    """
+    Loads the optimus model.
+    """
+    if path is None:
+        PATH_TO_CHECKPOINT = "/cluster/CBIO/home/tlazard/.cache/dl_models/bioptimus/h-optimus-0.pth"  # Path to the downloaded checkpoint.
+
+        params = {
+            'patch_size': 14,
+            'embed_dim': 1536,
+            'depth': 40,
+            'num_heads': 24,
+            'init_values': 1e-05,
+            'mlp_ratio': 5.33334,
+            'mlp_layer': functools.partial(
+                timm.layers.mlp.GluMlp, act_layer=torch.nn.modules.activation.SiLU, gate_last=False
+            ),
+            'act_layer': torch.nn.modules.activation.SiLU,
+            'reg_tokens': 4,
+            'no_embed_class': True,
+            'img_size': 224,
+            'num_classes': 0,
+            'in_chans': 3
+        }
+
+        model = timm.models.VisionTransformer(**params)
+        model.load_state_dict(torch.load(PATH_TO_CHECKPOINT, map_location="cpu"))
+        model.eval()
     return model
 
 def load_gigapath_model(path_placeholder=None):
@@ -168,9 +199,8 @@ class ModelWrapper:
                 embeddings = embeddings.reshape(1,-1)
             embeddings = self.pca.transform(embeddings)[:,:256]
         return embeddings
-
 def get_tile_encoder(model, device):
-    model_path = eval(f'download_{model}()')
+    model_path = download_item(model)
     if model == 'moco':
         model = load_moco_model(model_path)
         model.eval().to(device)
@@ -178,33 +208,39 @@ def get_tile_encoder(model, device):
     elif model == 'ctranspath':
         model = load_transpath_model(model_path)
         model.eval().to(device)
-        pca = download_pca_ctranspath()
-        pca = np.load(pca, allow_pickle=True).item()
+        pca_path = download_item('pca_ctranspath')
+        pca = np.load(pca_path, allow_pickle=True).item()
         return ModelWrapper(model, last_layer=True, pca=pca)
     elif model == 'phikon':
         model = load_phikon_model(model_path)
         model.eval().to(device)
-        pca = download_pca_phikon()
-        pca = torch.load(pca) #small incoherency with ctranspath (numpy)
+        pca_path = download_item('pca_phikon')
+        pca = torch.load(pca_path)
         return ModelWrapper(model, last_layer=True, pca=pca, phikon=True)
     elif model == "gigapath":
         model = load_gigapath_model(model_path)
         model.eval().to(device)
-        pca = download_pca_gigapath()
-        pca = torch.load(pca)
+        pca_path = download_item('pca_gigapath')
+        pca = torch.load(pca_path)
         return ModelWrapper(model, last_layer=True, pca=pca, phikon=False)
     elif model == "uni":
         model = load_gigapath_model()
         model.eval().to(device)
-        pca = download_pca_gigapath()
-        pca = torch.load(pca)
+        pca_path = download_item('pca_uni')
+        pca = torch.load(pca_path)
         return ModelWrapper(model, last_layer=True, pca=pca, phikon=False)
-       
+    elif model == "optimus":
+        model = load_optimus_model()
+        model.eval().to(device)
+        pca_path = download_item('pca_optimus')
+        pca = torch.load(pca_path)
+        return ModelWrapper(model, last_layer=True, pca=pca, phikon=False)
+    
 def get_embeddings(model, image_path, N_ensemble=500, magnification_tile=10, device='cpu', n_tiles_during_training=5, store_intermediate=None):
     """
     Computes the embeddings of a slide.
     Args:
-        model (str): Name of the model. either moco or ctranspath
+        model (str): Name of the tile encoding model. either moco or ctranspath or phikon or gigapath or uni or optimus
         image_path (str): Path to the slide.
         N_ensemble (int): Number of tiles to use for the ensemble.
         magnification_tile (int): Magnification of the tiles.
@@ -216,7 +252,7 @@ def get_embeddings(model, image_path, N_ensemble=500, magnification_tile=10, dev
         embeddings (np.array): Embeddings of the slide.
         xys (np.array): Coordinates of the tiles.
     """
-    data = SlideTileDataset(image_path, N_ensemble=N_ensemble, magnification_tile=magnification_tile, n_tiles_during_training=n_tiles_during_training, store_intermediate=store_intermediate)
+    data = SlideTileDataset(image_path, N_ensemble=N_ensemble, magnification_tile=magnification_tile, n_tiles_during_training=n_tiles_during_training, store_intermediate=store_intermediate, model=model)
     if len(data) == 0:
         return None, None
     num_cpus = len(os.sched_getaffinity(0))
@@ -225,7 +261,7 @@ def get_embeddings(model, image_path, N_ensemble=500, magnification_tile=10, dev
     xys = []
     for batch in dataloader:
         with torch.autocast(device_type="cuda", dtype=torch.float16):
-            with torch.no_grad():
+            with torch.inference_mode():
                 im, xy = batch
                 im = im.to(device)
                 xys.append(xy)

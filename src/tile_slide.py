@@ -21,7 +21,12 @@ class SlideTileDataset(Dataset):
     mag_level0 = 40
     ds_per_level = {'.svs': 4, '.ndpi':2, '.tiff':2, '.tif':2}
     final_tile_size = 224
-    def __init__(self, image_path, N_ensemble=None, magnification_tile=10, n_tiles_during_training=5, store_intermediate=None):
+    normalization_params = {
+        'default': {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]},
+        'optimus': {'mean': (0.707223, 0.578729, 0.703617), 'std': (0.211883, 0.230117, 0.177517)}
+    }
+
+    def __init__(self, image_path, N_ensemble=None, magnification_tile=10, n_tiles_during_training=5, store_intermediate=None, model='default'):
         self.n_tiles_during_training = n_tiles_during_training # Models are trained with 5 tiles per slide
         self.max_tiles_per_slide = self.n_tiles_during_training * N_ensemble if N_ensemble is not None else None
         self.magnification_tile = magnification_tile
@@ -31,6 +36,7 @@ class SlideTileDataset(Dataset):
         self.mask_tolerance = 0.9
         self.image = openslide.open_slide(self.image_path)
         self.thumbnail = self._get_thumbnail()
+        self.model = model
 
         if store_intermediate is not None:
             self.store = Path(store_intermediate)
@@ -60,10 +66,10 @@ class SlideTileDataset(Dataset):
         return tile, torch.Tensor(np.array([col, row]))
 
     def _get_transforms(self):
+        norm_params = self.normalization_params.get(self.model, self.normalization_params['default'])
         return transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], 
-                                 std=[0.229, 0.224, 0.225])
+            transforms.Normalize(mean=norm_params['mean'], std=norm_params['std'])
         ])
 
     def _get_thumbnail(self):
@@ -178,5 +184,4 @@ class SlideTileDataset(Dataset):
         if mask_patch.sum() <= mask_tolerance * np.ones(mask_patch.shape).sum():
             return False
         return True
-
 

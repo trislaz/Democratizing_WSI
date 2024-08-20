@@ -17,14 +17,7 @@ from tqdm import tqdm
 if os.environ['USE_SCM'] == 'True':
     from .networks import FullSparseConvMIL
 from .networks import ResidualMLP
-from .downloads import (download_gigassl_mlp_ctranspath,
-                        download_gigassl_mlp_moco,
-                        download_gigassl_scm_ctranspath,
-                        download_gigassl_scm_moco, 
-                        download_gigassl_scm_phikon, 
-                        download_gigassl_mlp_phikon,
-                        download_gigassl_scm_gigapath,
-                        download_gigassl_scm_uni)
+from .downloads import download_item
 from .encode_tiles import (ModelWrapper, get_embeddings, get_tile_encoder,
                            load_moco_model)
 from .tile_slide import SlideTileDataset
@@ -77,7 +70,7 @@ def load_pretrained_model(model_path, gigassl_type):
     return model
 
 def get_model_and_hook(tile_encoder_type, gigassl_type):
-    path = eval(f'download_gigassl_{gigassl_type}_{tile_encoder_type}()')
+    path = download_item(f'gigassl_{gigassl_type}_{tile_encoder_type}')
     model = load_pretrained_model(path, gigassl_type)
     hooker = type('hooker', (), {'item':None})()
     def hook(m, i, o):
