@@ -39,7 +39,7 @@ download_params = {
     },
     'optimus': {
         'filename': None,
-        'url': "hf-hub:bioptimus/H-optimus-0",
+        'url': "hf_hub:bioptimus/H-optimus-0",
         'use_gdown': False,
         'is_model': True
     },
