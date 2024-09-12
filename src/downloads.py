@@ -15,7 +15,7 @@ download_params = {
     },
     'phikon': {
         'filename': None,
-        'url': 'hf-hub:owkin/phikon',
+        'url': 'hf_hub:owkin/phikon',
         'use_gdown': False,
         'is_model': True
     },
