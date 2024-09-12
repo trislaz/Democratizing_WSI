@@ -10,10 +10,10 @@ from PIL import Image, ImageDraw
 from skimage.color import rgb2gray
 from skimage.filters import  threshold_otsu
 from skimage.morphology import square
-if os.environ['USE_TRANSPATH'] == 'True':
+if os.environ['ENCODER_TYPE'] == 'CTRANSPATH':
     from timm.models.layers.helpers import to_2tuple
     import timm
-if (os.environ['USE_GIGAPATH'] == 'True') or (os.environ['USE_UNI'] == 'True'):
+if os.environ['ENCODER_TYPE'] in ['GIGAPATH', 'UNI', 'OPTIMUS']:
     import timm
 
 from torch.utils.data import DataLoader
@@ -54,50 +54,25 @@ def load_moco_model(moco_weights_path, model_name='resnet18'):
     print('Loaded the weigths properly.')
     return model
 
-def load_phikon_model(path_placeholder):
+def load_phikon_model(path="hf-hub:owkin/phikon"):
     """
     Loads the phikon model.
     """
     model = ViTModel.from_pretrained("owkin/phikon", add_pooling_layer=False)
     return model
 
-def load_optimus_model(path=None):
+def load_optimus_model(path='hf-hub:bioptimus/H-optimus-0'):
     """
     Loads the optimus model.
     """
-    if path is None:
-        PATH_TO_CHECKPOINT = "/cluster/CBIO/home/tlazard/.cache/dl_models/bioptimus/h-optimus-0.pth"  # Path to the downloaded checkpoint.
-
-        params = {
-            'patch_size': 14,
-            'embed_dim': 1536,
-            'depth': 40,
-            'num_heads': 24,
-            'init_values': 1e-05,
-            'mlp_ratio': 5.33334,
-            'mlp_layer': functools.partial(
-                timm.layers.mlp.GluMlp, act_layer=torch.nn.modules.activation.SiLU, gate_last=False
-            ),
-            'act_layer': torch.nn.modules.activation.SiLU,
-            'reg_tokens': 4,
-            'no_embed_class': True,
-            'img_size': 224,
-            'num_classes': 0,
-            'in_chans': 3
-        }
-
-        model = timm.models.VisionTransformer(**params)
-        model.load_state_dict(torch.load(PATH_TO_CHECKPOINT, map_location="cpu"))
-        model.eval()
+    model = timm.create_model(path, pretrained=True, init_values=1e-5, dynamic_img_size=False)
     return model
 
-def load_gigapath_model(path_placeholder=None):
+def load_gigapath_model(path="hf-hub:prov-gigapath/prov-gigapath"):
     """
     @https://github.com/prov-gigapath/prov-gigapath
     """
-    if path_placeholder is None:
-        tile_encoder = timm.create_model('hf_hub:prov-gigapath/prov-gigapath', pretrained=True)
-        tile_encoder.eval()
+    tile_encoder = timm.create_model('hf_hub:prov-gigapath/prov-gigapath', pretrained=True)
     return tile_encoder
 
 def load_uni_model(path='/cluster/CBIO/home/tlazard/.cache/dl_models/uni/pytorch_model.bin'):
@@ -199,6 +174,7 @@ class ModelWrapper:
                 embeddings = embeddings.reshape(1,-1)
             embeddings = self.pca.transform(embeddings)[:,:256]
         return embeddings
+
 def get_tile_encoder(model, device):
     model_path = download_item(model)
     if model == 'moco':
@@ -224,13 +200,13 @@ def get_tile_encoder(model, device):
         pca = torch.load(pca_path)
         return ModelWrapper(model, last_layer=True, pca=pca, phikon=False)
     elif model == "uni":
-        model = load_gigapath_model()
+        model = load_uni_model()
         model.eval().to(device)
         pca_path = download_item('pca_uni')
         pca = torch.load(pca_path)
         return ModelWrapper(model, last_layer=True, pca=pca, phikon=False)
     elif model == "optimus":
-        model = load_optimus_model()
+        model = load_optimus_model(model_path)
         model.eval().to(device)
         pca_path = download_item('pca_optimus')
         pca = torch.load(pca_path)

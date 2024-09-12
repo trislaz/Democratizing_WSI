@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
+from huggingface_hub import snapshot_download
 import gdown
 
 import requests
+
 
 download_params = {
     'ctranspath': {
@@ -13,13 +15,13 @@ download_params = {
     },
     'phikon': {
         'filename': None,
-        'url': '',
+        'url': 'hf-hub:owkin/phikon',
         'use_gdown': False,
         'is_model': True
     },
     'gigapath': {
-        'filename': 'gigapath.pth',
-        'url': '',
+        'filename': None,
+        'url': 'hf_hub:prov-gigapath/prov-gigapath',
         'use_gdown': False,
         'is_model': True
     },
@@ -37,7 +39,7 @@ download_params = {
     },
     'optimus': {
         'filename': None,
-        'url': "",
+        'url': "hf-hub:bioptimus/H-optimus-0",
         'use_gdown': False,
         'is_model': True
     },
@@ -79,7 +81,7 @@ download_params = {
     },
     'gigassl_scm_gigapath': {
         'filename': 'gigassl-scm-gigapath.pth.tar',
-        'url': "",
+        'url': "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/8ebb6688-df30-40db-86da-524b83853def/file_downloaded",
         'use_gdown': False,
         'is_model': True
     },
@@ -91,7 +93,7 @@ download_params = {
     },
     'gigassl_scm_optimus': {
         'filename': 'gigassl-scm-optimus.pth',
-        'url': "",
+        'url': "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/e906e762-d542-4496-9814-9c35558d8fc8/file_downloaded",
         'use_gdown': False,
         'is_model': True
     },
@@ -113,6 +115,18 @@ download_params = {
         'use_gdown': False,
         'is_model': False
     },
+    'TCGA_optimus': {
+        'filename': 'TCGA-gigassl_optimus.npy',
+        'url': "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/400d7ad7-9e9f-48dd-b241-a054cc189a37/file_downloaded",
+        'use_gdown': False,
+        'is_model': False
+    },
+    'TCGA_gigapath': {
+        'filename': 'TCGA-gigassl_gigapath.npy',
+        'url':"https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/03977666-5ca2-43cc-a588-0f067dd1fc09/file_downloaded", 
+        'use_gdown': False,
+        'is_model': False
+    },
     'pca_ctranspath': {
         'filename': 'pca-ctranspath.npy',
         'url': "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/b2301b46-433e-4028-aba1-853c71739638/file_downloaded",
@@ -127,7 +141,7 @@ download_params = {
     },
     'pca_gigapath': {
         'filename': 'pca-gigapath.pth',
-        'url': "",
+        'url': "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/4ff282b5-2031-4a33-987c-b73a6893d7d4/file_downloaded",
         'use_gdown': False,
         'is_model': True
     },
@@ -139,7 +153,7 @@ download_params = {
     },
     'pca_optimus': {
         'filename': 'pca-optimus.pth',
-        'url': "",
+        'url': "https://data.mendeley.com/public-files/datasets/d573xfd9fg/files/a8666183-bc01-48a6-9702-2f57e82735ad/file_downloaded",
         'use_gdown': False,
         'is_model': True
     }
@@ -156,6 +170,11 @@ def download_item(item_name):
     url = params['url']
     use_gdown = params['use_gdown']
     is_model = params['is_model']
+
+    #HF download - using the HF cache
+    if url.startswith('hf_hub:'):
+        snapshot_download(url)
+        return url
 
     if filename is None:
         return None

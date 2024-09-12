@@ -16,7 +16,7 @@ import torch.nn.functional
 import torch.nn.functional as F
 import torchvision
 import torchvision.models.resnet as resnet_factory
-if os.environ['USE_SCM'] == 'True':
+if os.environ['ARCHITECTURE'] == 'SCM':
     import sparseconvnet
     from sparseconvnet import SparseConvNetTensor
 from torch.nn import (AvgPool2d, BatchNorm1d, BatchNorm2d, Conv1d, Conv2d,

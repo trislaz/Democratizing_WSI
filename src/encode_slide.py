@@ -14,9 +14,10 @@ from torchvision.models import resnet18, resnet50
 from torchvision.transforms import ToTensor
 from tqdm import tqdm
 
-if os.environ['USE_SCM'] == 'True':
+if os.environ['ARCHITECTURE'] == 'SCM':
     from .networks import FullSparseConvMIL
-from .networks import ResidualMLP
+else:
+    from .networks import ResidualMLP
 from .downloads import download_item
 from .encode_tiles import (ModelWrapper, get_embeddings, get_tile_encoder,
                            load_moco_model)
@@ -84,6 +85,27 @@ def get_model_and_hook(tile_encoder_type, gigassl_type):
 
 @timing
 def encode_image(tile_encoder_type, gigassl_type, image_path, N_ensemble, last_layer=False, n_tiles_during_training=5, store_intermediate=None, from_to=[0, -1]):
+    """
+    Encode a whole slide image (WSI) or a directory of WSIs into feature vectors.
+
+    This function processes WSIs using a two-step approach:
+    1. Encode tiles using a pre-trained tile encoder.
+    2. Aggregate tile embeddings using a GigaSSL model to produce a single feature vector per WSI.
+
+    Args:
+        tile_encoder_type (str): Type of tile encoder to use (e.g., 'moco', 'ctranspath', 'phikon', 'gigapath', 'uni').
+        gigassl_type (str): Type of GigaSSL model to use ('scm' for SparseConvMIL or 'mlp' for MLP-like).
+        image_path (str or Path): Path to a single WSI file or a directory containing multiple WSIs.
+        N_ensemble (int): Number of tiles to sample from each WSI for encoding.
+        last_layer (bool, optional): If True, use the last layer of the tile encoder. Defaults to False.
+        n_tiles_during_training (int, optional): Number of tiles used during GigaSSL model training. Defaults to 5.
+        store_intermediate (str or Path, optional): Path to store intermediate results (e.g., sampled tiles). Defaults to None.
+        from_to (list, optional): Range of WSIs to process if image_path is a directory. Defaults to [0, -1] (all WSIs).
+
+    Returns:
+        dict: A dictionary where keys are WSI filenames (without extension) and values are their corresponding feature vectors.
+              If a WSI fails to process, its value will be None.
+    """
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     tile_encoder = get_tile_encoder(tile_encoder_type, device)

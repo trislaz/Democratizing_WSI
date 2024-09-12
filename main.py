@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description='Encode WSI into a feature vector.'
 parser.add_argument('--input', type=str, help='Path to the input WSIs. Can be a directory or a single file.')
 parser.add_argument('--output', type=str, help='Path to write the output feature vectors.')
 parser.add_argument('--gigassl_type', type=str, help='name of the gigassl type - SparseConvMIL or MLP-like-', default='scm', choices=['scm', 'mlp'])
-parser.add_argument('--tile_encoder_type', type=str, help='name of the tile encoder type', default='moco', choices=['moco', 'ctranspath', 'phikon', 'gigapath', 'uni'])
+parser.add_argument('--tile_encoder_type', type=str, help='name of the tile encoder type', default='moco', choices=['moco', 'ctranspath', 'phikon', 'gigapath', 'uni', 'optimus'])
 parser.add_argument('--N_ensemble', type=int, default=100, help='Number of WSI views to ensemble (the higher the better but the slower).')
 parser.add_argument('--store_intermediate', type=str, default=None, help='Path to store the tiles.')
 parser.add_argument('--job_id', type=int, default=None, help='Job id -if used with a cluster-. Do not use it if you are running the script locally.')
@@ -20,10 +20,8 @@ output = Path(args.output)
 output.mkdir(exist_ok=True, parents=True)
 
 # Useful for imports
-os.environ['USE_SCM'] = 'True' if args.gigassl_type == 'scm' else 'False'
-os.environ['USE_TRANSPATH'] = 'True' if args.tile_encoder_type == 'ctranspath' else 'False'
-os.environ['USE_GIGAPATH'] = 'True' if args.tile_encoder_type == 'gigapath' else 'False'
-os.environ['USE_UNI'] = 'True' if args.tile_encoder_type == 'uni' else 'False'
+os.environ['ENCODER_TYPE'] = args.tile_encoder_type.upper()
+os.environ['ARCHITECTURE'] = args.gigassl_type.upper()
 from src.encode_slide import encode_image
 
 if args.job_id is not None:
