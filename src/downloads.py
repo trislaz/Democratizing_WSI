@@ -173,7 +173,7 @@ def download_item(item_name):
 
     #HF download - using the HF cache
     if url.startswith('hf_hub:'):
-        snapshot_download(url)
+        snapshot_download(url.split(':')[1])
         return url
 
     if filename is None:
