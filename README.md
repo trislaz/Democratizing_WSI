@@ -17,7 +17,7 @@ Note: `--input` is the path of either a WSI or a folder containing WSI (in .ndpi
 
 - `--input`: path of either a WSI or a folder containing WSI (in .ndpi, .svs or .tif format) (required)
 - `--output`: path of the output folder (required)
-- `--tile_encoder_type`: type of tile encoder to use (default: moco, available: moco, [ctranspath](https://github.com/Xiyue-Wang/TransPath), [phikon](https://www.medrxiv.org/content/10.1101/2023.07.21.23292757v1))
+- `--tile_encoder_type`: type of tile encoder to use (default: moco, available: moco, [ctranspath](https://github.com/Xiyue-Wang/TransPath), [phikon](https://www.medrxiv.org/content/10.1101/2023.07.21.23292757v1), [gigapath](https://github.com/prov-gigapath/prov-gigapath), [H-Optimus-0](https://huggingface.co/bioptimus/H-optimus-0) )
 - `--gigassl_type`: type of gigassl model (default: scm, available: scm, mlp)
 - `--N_ensemble`: number of WSI views to ensemble (default: 100). Usually, the more the better, but the more, the heavier computationally.
 - `--store_intermediate`: path of the folder where to store intermediate results (default: None). Intermediate results include tissue mask, tiles localizations as well as the used tiles themselves.
