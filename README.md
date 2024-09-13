@@ -88,11 +88,13 @@ It provides the classification implementation used in the article.
 
 Here are the results of 10-fold CV AUCs obtained with the 'scm' model trained on top of either CTranspath or MoCo embeddings. These are classification perfomances of **simple logistic regression !**
 
-|                   | GigaSSL + Moco | GigaSSL + CTransPath | GigaSSL + PhiKon |
-|-------------------|----------------|----------------------|------------------|
-| brca_histotypes (ductal / lobular)   | 0.927 ± 0.027  | 0.942 ± 0.029        | 0.946 ± 0.030    |
-| brca_mhrd (HRD / HRP)        | 0.789 ± 0.027  | 0.804 ± 0.028        | 0.818 ± 0.024    |
-| brca_moltype (TNBC / luminal)     | 0.929 ± 0.041  | 0.948 ± 0.035        | 0.941 ± 0.030    |
-| kidney (cc / p / ch)           | 0.985 ± 0.007  | 0.994 ± 0.004        | 0.994 ± 0.006    |
-| lung (LUAD / LUSC)             | 0.961 ± 0.013  | 0.974 ± 0.008        | 0.976 ± 0.008    |
+|                   | GigaSSL + Moco | GigaSSL + CTransPath | GigaSSL + PhiKon | GigaSSL + Optimus | GigaSSL + GigaPath |
+|-------------------|----------------|----------------------|------------------|-------------------|--------------------|
+| Mean ± Std        |                |                      |                  |                   |                    |
+| brca_histotypes (ductal / lobular)	          | 0.933 ± 0.026  | 0.942 ± 0.035        | 0.939 ± 0.039    | __0.968 ± 0.020__     | 0.961 ± 0.029      |
+| brca_mhrd (HRD / HRP)            | 0.960 ± 0.016  | 0.974 ± 0.010        | 0.977 ± 0.011    | __0.981 ± 0.010__     | 0.980 ± 0.010      |
+| brca_moltype (TNBC / luminal)            | 0.793 ± 0.052  | 0.809 ± 0.050        | 0.819 ± 0.039    | 0.834 ± 0.044     | __0.837 ± 0.048__      |
+| kidney (cc / p / ch)            | 0.924 ± 0.033  | __0.946 ± 0.040__        | 0.945 ± 0.032    | 0.943 ± 0.030     | 0.938 ± 0.034      |
+| lung (LUAD / LUSC)            | 0.983 ± 0.008  | __0.993 ± 0.004__        | 0.994 ± 0.003    | 0.992 ± 0.004     | 0.991 ± 0.005      |
+
 
