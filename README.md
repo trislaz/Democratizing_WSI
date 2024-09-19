@@ -1,7 +1,8 @@
-# Democratizing computational pathology: optimized Whole Slide Image representations for The Cancer Genome Atlas
+# Giga-SSL slide-level foundation models:
 
 Companion package for the paper "Democratizing computational pathology: optimized Whole Slide Image representations for The Cancer Genome Atlas".
-This package will allow you to encode Whole Slide Images into their Giga-SSL representation (1 feature vector) with **one command line**.
+This package will allow you to encode Whole Slide Images into their Giga-SSL representation (1 feature vector) with **one command line**. 
+Models are open-source, open-weights, an still constitute (Sept 2024) the state-of-the-art slide-level encoders (GigaSSL + GigaPath features outperform GigaPath slide encoder on private and public benchmark datasets - blogpost coming soon).
 
 # Usage - Encode WSIs
 
