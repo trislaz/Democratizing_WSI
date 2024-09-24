@@ -84,7 +84,7 @@ import numpy as np
 embeddings = np.load('features_moco_scm.npy', allow_pickle=True).item()
 ```
 
-Finally, the file `test_classification.py` downloads TCGA embeddings and performs classification tasks on them.
+Finally, the file `test_classification.py` downloads TCGA embeddings computed using the different models and performs classification tasks on them.
 It provides the classification implementation used in the article.
 
 Here are the results of 10-fold CV AUCs obtained with the 'scm' model trained on top of either CTranspath or MoCo embeddings. These are classification perfomances of **simple logistic regression !**
