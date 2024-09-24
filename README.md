@@ -3,7 +3,7 @@
 Companion package for the paper "Democratizing computational pathology: optimized Whole Slide Image representations for The Cancer Genome Atlas".
 This package will allow you to encode Whole Slide Images into their Giga-SSL representation (1 feature vector) with **one command line**. 
 
-You can download here the different Giga-SSL models trained using specific tile encoders (moco, ctranspath, phikon, gigapath, H-Optimus-0) as well as the encoded slides of the TCGA using each of these models. 
+You can download here the different Giga-SSL models trained using specific tile encoders (moco, ctranspath, phikon, gigapath, H-Optimus-0) as well as the representations of the slides of the TCGA encoded each of these models. 
 
 Models are open-source, open-weights, an still constitute (Sept 2024) the state-of-the-art slide-level encoders (GigaSSL + GigaPath features outperform GigaPath slide encoder on private and public benchmark datasets - blogpost coming soon).
 
